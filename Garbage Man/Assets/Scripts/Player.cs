@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
+    //Public parameters
     public float Speed = 10;
 
+    //Componenets
     private Rigidbody _rb;
 
 	// Use this for initialization
@@ -19,8 +21,6 @@ public class Player : MonoBehaviour {
         float x_mov = Input.GetAxisRaw("Horizontal") * Speed;
         float z_mov = Input.GetAxisRaw("Vertical") * Speed;
 
-        Vector3 movement = new Vector3(x_mov, 0.0f, z_mov);
-
         _rb.velocity = new Vector3(x_mov, 0, z_mov);
         if(x_mov != 0 || z_mov != 0)
             transform.rotation = Quaternion.LookRotation(_rb.velocity);
@@ -30,4 +30,5 @@ public class Player : MonoBehaviour {
     void Update () {
 
     }
+
 }
