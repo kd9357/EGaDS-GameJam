@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
+    //Testing vars
+    public bool LockedMovement = true;
+
     //Public parameters
     public float NormalSpeed = 15;
     public float SlowSpeed = 10;
     public int TrashCapacity = 5;
+    public float DropDistance = 5;
+    public GameObject Trash;
 
     //Componenets
     private Rigidbody _rb;
@@ -25,8 +30,10 @@ public class Player : MonoBehaviour {
     // Runs once per physics tick
     private void FixedUpdate()
     {
-        float x_mov = Input.GetAxisRaw("Horizontal") * _currentSpeed;
-        float z_mov = Input.GetAxisRaw("Vertical") * _currentSpeed;
+        float x_mov = LockedMovement ? Input.GetAxisRaw("Horizontal") * _currentSpeed
+                                     : Input.GetAxis("Horizontal") * _currentSpeed ;
+        float z_mov = LockedMovement ? Input.GetAxisRaw("Vertical") * _currentSpeed
+                                     : Input.GetAxis("Vertical") * _currentSpeed;
 
         if (Mathf.Abs(x_mov) + Mathf.Abs(z_mov) > 1)
         {
@@ -47,6 +54,7 @@ public class Player : MonoBehaviour {
     }
     #endregion
 
+    #region Collisions
     private void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Landfill Trigger"))
@@ -58,11 +66,26 @@ public class Player : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Colliding with " + collision.gameObject.tag);
         if(collision.gameObject.CompareTag("Road"))
         {
             _currentSpeed = NormalSpeed;
         }
+        if(collision.gameObject.CompareTag("Hazard"))
+        {
+            if (_currentTrash > 0)
+            {
+                _currentTrash--;
+                var newPosition = transform.position - transform.forward * DropDistance;
+                var x = (GameObject)Instantiate(Trash, newPosition, transform.rotation);
+            }
+          
+        }
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Road"))
+            _currentSpeed = NormalSpeed;
     }
 
     private void OnCollisionExit(Collision collision)
@@ -72,6 +95,7 @@ public class Player : MonoBehaviour {
             _currentSpeed = SlowSpeed;
         }
     }
+    #endregion
 
     #region Helper Methods
     public bool AddTrash()
