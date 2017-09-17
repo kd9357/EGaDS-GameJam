@@ -67,19 +67,9 @@ public class Player : MonoBehaviour {
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.CompareTag("Road"))
-        {
             _currentSpeed = NormalSpeed;
-        }
         if(collision.gameObject.CompareTag("Hazard"))
-        {
-            if (_currentTrash > 0)
-            {
-                _currentTrash--;
-                var newPosition = transform.position - transform.forward * DropDistance;
-                var x = (GameObject)Instantiate(Trash, newPosition, transform.rotation);
-            }
-          
-        }
+            DropTrash();
     }
 
     private void OnCollisionStay(Collision collision)
@@ -91,9 +81,7 @@ public class Player : MonoBehaviour {
     private void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("Road"))
-        {
             _currentSpeed = SlowSpeed;
-        }
     }
     #endregion
 
@@ -106,6 +94,16 @@ public class Player : MonoBehaviour {
             return true;
         }
         return false;
+    }
+
+    public void DropTrash()
+    {
+        if(_currentTrash > 0)
+        {
+            _currentTrash--;
+            var newPosition = transform.position - transform.forward * DropDistance;
+            var x = (GameObject)Instantiate(Trash, newPosition, transform.rotation);
+        }
     }
 
     public int TrashAmount()
