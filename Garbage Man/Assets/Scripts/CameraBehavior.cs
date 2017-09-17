@@ -11,7 +11,7 @@ public class CameraBehavior : MonoBehaviour {
     public float ScrollSpeed = 300;
     public float Distance = 30;
 
-    Vector3 pos;
+    //I don't think I really need this
     private Camera _cam;
 
     void Start()
@@ -19,7 +19,6 @@ public class CameraBehavior : MonoBehaviour {
         _cam = (Camera)this.gameObject.GetComponent("Camera");
         _cam.transform.rotation = Quaternion.Euler(30, 45, 0);
         _cam.orthographicSize = StartSize;
-        pos = target.transform.position;
     }
 
     void Update()
