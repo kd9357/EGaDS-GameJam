@@ -12,6 +12,7 @@ public class Player : MonoBehaviour {
     public float SlowSpeed = 10;
     public int TrashCapacity = 5;
     public float DropDistance = 5;
+    public float DropTerminate = 5f;
     public GameObject Trash;
 
     //Componenets
@@ -20,10 +21,14 @@ public class Player : MonoBehaviour {
     private int _currentTrash = 0;
     private float _currentSpeed;
 
+    private List<GameObject> _droppedTrash = new List<GameObject>();
+    private float _trashTimer;
+
 	// Use this for initialization
 	void Start () {
         _rb = gameObject.GetComponent<Rigidbody>();
         _currentSpeed = SlowSpeed;
+        _trashTimer = 0;
 	}
 
     #region Updates
@@ -50,7 +55,16 @@ public class Player : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-
+        if (_trashTimer > 0)
+            _trashTimer -= Time.deltaTime;
+        else if(_droppedTrash.Count != 0)
+        {
+            var t = _droppedTrash[0];
+            _droppedTrash.Remove(t);
+            _trashTimer = DropTerminate;
+            if (t != null)
+                Destroy(t);
+        }
     }
     #endregion
 
@@ -102,7 +116,9 @@ public class Player : MonoBehaviour {
         {
             _currentTrash--;
             var newPosition = transform.position - transform.forward * DropDistance;
-            var x = (GameObject)Instantiate(Trash, newPosition, transform.rotation);
+            //var x = (GameObject)Instantiate(Trash, newPosition, transform.rotation);
+            _droppedTrash.Add((GameObject)Instantiate(Trash, newPosition, transform.rotation));
+            _trashTimer = DropTerminate;
         }
     }
 
