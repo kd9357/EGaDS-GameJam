@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraBehavior : MonoBehaviour {
 
     public Player Player;
-    private float CameraDistance = 15;
+    public float CameraDistance = 15;
 
 	// Use this for initialization
 	void Start () {

@@ -27,9 +27,9 @@ public class Collectible : MonoBehaviour {
         if(other.CompareTag("Player"))
         {
             //Do some effect
-            GameController.instance.IncrementScore();
-
-            Destroy(gameObject);
+            //GameController.instance.IncrementScore();
+            if(other.GetComponent<Player>().AddTrash())
+                 Destroy(gameObject);
         }
     }
 }
