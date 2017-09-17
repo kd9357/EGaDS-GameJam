@@ -12,7 +12,12 @@ public class PedestrianBehavior : MonoBehaviour
     public bool Standing = true;
     public float Speed = 5f;
 
+	//Audio vars
+	public AudioClip[] AudioClips;
+
     private Rigidbody _rb;
+	private AudioSource _audio;
+
     private float _timer;
     private GameObject _go;
     private bool _alive = true;
@@ -21,6 +26,7 @@ public class PedestrianBehavior : MonoBehaviour
     void Start()
     {
         _rb = gameObject.GetComponent<Rigidbody>();
+		_audio = gameObject.GetComponent<AudioSource> ();
         _go = StartSpawned ? (GameObject)Instantiate(ItemPrefab, transform.position - transform.forward * DropDistance, transform.rotation) : null;
         _timer = Random.Range(SpawnTimerLower, SpawnTimerUpper);
     }
@@ -50,6 +56,8 @@ public class PedestrianBehavior : MonoBehaviour
         Debug.Log("Colliding with " + collision.gameObject.tag);
         if (collision.gameObject.CompareTag("Player"))
         {
+			_audio.clip = AudioClips [0];
+			_audio.Play();
             _alive = false;
         }
     }

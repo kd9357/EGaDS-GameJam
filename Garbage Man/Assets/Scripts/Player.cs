@@ -14,9 +14,11 @@ public class Player : MonoBehaviour {
     public float DropDistance = 5;
     public float DropTerminate = 5f;
     public GameObject Trash;
+	public AudioClip[] AudioClips;
 
     //Componenets
     private Rigidbody _rb;
+	private AudioSource _audio;
 
     private int _currentTrash = 0;
     private float _currentSpeed;
@@ -75,6 +77,8 @@ public class Player : MonoBehaviour {
         {
             GameController.instance.UpdateScore(_currentTrash);
             _currentTrash = 0;
+			_audio.clip = AudioClips [1];
+			_audio.Play ();
         }   
     }
 
@@ -82,8 +86,12 @@ public class Player : MonoBehaviour {
     {
         if(collision.gameObject.CompareTag("Road"))
             _currentSpeed = NormalSpeed;
-        if(collision.gameObject.CompareTag("Hazard"))
-            DropTrash();
+		if (collision.gameObject.CompareTag ("Hazard")) {
+			_audio.clip = AudioClips [2];
+			_audio.Play ();
+			DropTrash();
+		}
+            
     }
 
     private void OnCollisionStay(Collision collision)
@@ -105,6 +113,8 @@ public class Player : MonoBehaviour {
         if (_currentTrash < TrashCapacity)
         {
             _currentTrash++;
+			_audio.clip = AudioClips [0];
+			_audio.Play ();
             return true;
         }
         return false;
