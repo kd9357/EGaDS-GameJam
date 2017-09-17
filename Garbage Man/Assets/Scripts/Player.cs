@@ -12,18 +12,26 @@ public class Player : MonoBehaviour {
     public float SlowSpeed = 10;
     public int TrashCapacity = 5;
     public float DropDistance = 5;
+    public float DropTerminate = 5f;
     public GameObject Trash;
+	public AudioClip[] AudioClips;
 
     //Componenets
     private Rigidbody _rb;
+	private AudioSource _audio;
 
     private int _currentTrash = 0;
     private float _currentSpeed;
 
+    private List<GameObject> _droppedTrash = new List<GameObject>();
+    private float _trashTimer;
+
 	// Use this for initialization
 	void Start () {
         _rb = gameObject.GetComponent<Rigidbody>();
+        _audio = gameObject.GetComponent<AudioSource>();
         _currentSpeed = SlowSpeed;
+        _trashTimer = 0;
 	}
 
     #region Updates
@@ -50,7 +58,16 @@ public class Player : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-
+        if (_trashTimer > 0)
+            _trashTimer -= Time.deltaTime;
+        else if(_droppedTrash.Count != 0)
+        {
+            var t = _droppedTrash[0];
+            _droppedTrash.Remove(t);
+            _trashTimer = DropTerminate;
+            if (t != null)
+                Destroy(t);
+        }
     }
     #endregion
 
@@ -59,6 +76,11 @@ public class Player : MonoBehaviour {
     {
         if(other.CompareTag("Landfill Trigger"))
         {
+            if(_currentTrash > 0)
+            {
+                _audio.clip = AudioClips[1];
+                _audio.Play();
+            }
             GameController.instance.UpdateScore(_currentTrash);
             _currentTrash = 0;
         }   
@@ -68,8 +90,12 @@ public class Player : MonoBehaviour {
     {
         if(collision.gameObject.CompareTag("Road"))
             _currentSpeed = NormalSpeed;
-        if(collision.gameObject.CompareTag("Hazard"))
-            DropTrash();
+		if (collision.gameObject.CompareTag ("Hazard")) {
+			_audio.clip = AudioClips [2];
+			_audio.Play ();
+			DropTrash();
+		}
+            
     }
 
     private void OnCollisionStay(Collision collision)
@@ -91,6 +117,8 @@ public class Player : MonoBehaviour {
         if (_currentTrash < TrashCapacity)
         {
             _currentTrash++;
+            _audio.clip = AudioClips[0];
+            _audio.Play();
             return true;
         }
         return false;
@@ -102,7 +130,9 @@ public class Player : MonoBehaviour {
         {
             _currentTrash--;
             var newPosition = transform.position - transform.forward * DropDistance;
-            var x = (GameObject)Instantiate(Trash, newPosition, transform.rotation);
+            //var x = (GameObject)Instantiate(Trash, newPosition, transform.rotation);
+            _droppedTrash.Add((GameObject)Instantiate(Trash, newPosition, transform.rotation));
+            _trashTimer = DropTerminate;
         }
     }
 

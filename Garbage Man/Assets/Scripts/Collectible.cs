@@ -2,15 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ItemId
-{
-    Trash,
-    Heatlh
-}
-
 public class Collectible : MonoBehaviour {
-
-    public ItemId Item;
 
 	// Use this for initialization
 	void Start () {
