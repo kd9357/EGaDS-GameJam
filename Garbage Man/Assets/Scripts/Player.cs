@@ -29,6 +29,7 @@ public class Player : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         _rb = gameObject.GetComponent<Rigidbody>();
+        _audio = gameObject.GetComponent<AudioSource>();
         _currentSpeed = SlowSpeed;
         _trashTimer = 0;
 	}
@@ -75,10 +76,13 @@ public class Player : MonoBehaviour {
     {
         if(other.CompareTag("Landfill Trigger"))
         {
+            if(_currentTrash > 0)
+            {
+                _audio.clip = AudioClips[1];
+                _audio.Play();
+            }
             GameController.instance.UpdateScore(_currentTrash);
             _currentTrash = 0;
-			_audio.clip = AudioClips [1];
-			_audio.Play ();
         }   
     }
 
@@ -113,8 +117,8 @@ public class Player : MonoBehaviour {
         if (_currentTrash < TrashCapacity)
         {
             _currentTrash++;
-			_audio.clip = AudioClips [0];
-			_audio.Play ();
+            _audio.clip = AudioClips[0];
+            _audio.Play();
             return true;
         }
         return false;

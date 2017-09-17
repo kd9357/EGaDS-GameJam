@@ -53,10 +53,10 @@ public class PedestrianBehavior : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Colliding with " + collision.gameObject.tag);
         if (collision.gameObject.CompareTag("Player"))
         {
-			_audio.clip = AudioClips [0];
+            int sound = Random.Range(0, 2);
+			_audio.clip = AudioClips [sound];
 			_audio.Play();
             _alive = false;
         }
