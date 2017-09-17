@@ -4,17 +4,35 @@ using UnityEngine;
 
 public class CameraBehavior : MonoBehaviour {
 
-    public Player Player;
-    public float CameraDistance = 15;
+    public GameObject target;
+    public float MinSize = 5;
+    public float StartSize = 15;
+    public float MaxSize = 30;
+    public float ScrollSpeed = 300;
+    public float Distance = 30;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        //TODO: There's gotta be a better way of doing this
-        transform.position = new Vector3(Player.transform.position.x - CameraDistance, Player.transform.position.y + CameraDistance * 0.9f, Player.transform.position.z - CameraDistance);
+    Vector3 pos;
+    private Camera _cam;
+
+    void Start()
+    {
+        _cam = (Camera)this.gameObject.GetComponent("Camera");
+        _cam.transform.rotation = Quaternion.Euler(30, 45, 0);
+        _cam.orthographicSize = StartSize;
+        pos = target.transform.position;
+    }
+
+    void Update()
+    {
+        _cam.orthographicSize -= Input.GetAxis("Mouse ScrollWheel") * ScrollSpeed * Time.deltaTime;
+        if (_cam.orthographicSize > MaxSize)
+            _cam.orthographicSize = MaxSize;
+        else if (_cam.orthographicSize < MinSize)
+            _cam.orthographicSize = MinSize;
+
+        float distance = 30;
+
+        transform.position = target.transform.position + new Vector3(-distance, distance, -distance);
+        _cam.transform.LookAt(target.transform);
     }
 }
